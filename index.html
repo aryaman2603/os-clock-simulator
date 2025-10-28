@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clock Algorithm Simulator</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <h1>Clock Page Replacement Simulator</h1>
+
+    <div class="container">
+        <div id="parameters" class="panel">
+            <h2>Parameters</h2>
+            <div class="control-group">
+                <label for="frames-input">Number of Frames:</label>
+                <input type="number" id="frames-input" value="4" min="1" max="10">
+            </div>
+            <div class="control-group">
+                <label for="ref-string-input">Reference String (comma-sep):</label>
+                <input type="text" id="ref-string-input" value="1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5">
+            </div>
+            <button id="start-button">Start / Reset</button>
+        </div>
+
+        <div id="controls" class="panel">
+            <h2>Controls</h2>
+            <div class="control-group">
+                <button id="play-pause-button" disabled>Play</button>
+                <button id="step-button" disabled>Step Forward</button>
+            </div>
+            <div class="control-group">
+                <label for="speed-slider">Speed:</label>
+                <input type="range" id="speed-slider" min="50" max="1950" value="1000" step="100">
+            </div>
+        </div>
+
+        <div id="statistics" class="panel">
+            <h2>Statistics</h2>
+            <p>Page Hits: <span id="hits-count">0</span></p>
+            <p>Page Faults: <span id="faults-count">0</span></p>
+            <p>Hit Ratio: <span id="hit-ratio">0.00%</span></p>
+            <p>Current Page: <span id="current-page">N/A</span></p>
+        </div>
+    </div>
+
+    <div class="main-content-wrapper">
+    <div id="visualization" class="panel">
+        <canvas id="clock-canvas" width="600" height="450">
+            Your browser does not support the HTML5 Canvas.
+        </canvas>
+    </div>
+
+    <div id="log-area" class="panel">
+        <h2>Execution Log</h2>
+        <div id="log-output" class="log-box"></div>
+    </div>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>

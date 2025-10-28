@@ -1,0 +1,188 @@
+/* Basic reset and font styling */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f4f7f6;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+    padding: 20px;
+}
+
+h1, h2 {
+    color: #005a9c;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 5px;
+    width: 100%;
+}
+
+h2 {
+    font-size: 1.2em;
+    margin-top: 0;
+}
+
+/* Main layout containers */
+.container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.panel {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Control and input styling */
+.control-group {
+    margin-bottom: 15px;
+}
+
+.control-group label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="number"] {
+    width: calc(100% - 20px);
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+button {
+    background-color: #0078d4;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+button:hover {
+    background-color: #005a9c;
+}
+
+button:disabled {
+    background-color: #cce;
+    cursor: not-allowed;
+}
+
+#play-pause-button {
+    background-color: #28a745;
+}
+
+#play-pause-button:hover {
+    background-color: #218838;
+}
+
+#play-pause-button.paused {
+    background-color: #ffc107;
+    color: #333;
+}
+
+#play-pause-button.paused:hover {
+    background-color: #e0a800;
+}
+
+input[type="range"] {
+    width: 100%;
+}
+
+/* Statistics panel */
+#statistics p {
+    margin: 10px 0;
+    font-size: 1.1em;
+}
+
+#statistics span {
+    font-weight: 700;
+    color: #0078d4;
+}
+
+/* Visualization and Log panels */
+#visualization {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#clock-canvas {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+#log-area {
+    display: flex;
+    flex-direction: column; 
+}
+
+.log-box {
+    width: calc(100% - 22px); /* 100% - padding */
+    height: 450px; /* Fixed height (same as canvas) */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 0.95em;
+    background-color: #fdfdfd;
+    overflow-y: auto; /* This makes it scrollable */
+    padding: 10px;
+    line-height: 1.4;
+}
+
+.log-entry {
+    margin: 0 0 5px 0;
+    padding: 2px 5px;
+    border-radius: 3px;
+    /* Prevent long strings from breaking layout */
+    word-break: break-all; 
+}
+
+/* Informational messages */
+.log-info {
+    color: #333;
+}
+
+/* Page Hit! (Green) */
+.log-hit {
+    color: #1a6e33;
+    background-color: #e6f7ea;
+    font-weight: 500;
+}
+
+/* Page Fault! (Red) */
+.log-fault {
+    color: #b3001e;
+    background-color: #fff0f1;
+    font-weight: 500;
+}
+
+/* Checking... (Yellow) */
+.log-check {
+    color: #795502;
+    background-color: #fffbeb;
+}
+
+/* New wrapper for side-by-side layout */
+.main-content-wrapper {
+    display: grid;
+    /* Give visualization 1.5 parts, log 1 part */
+    grid-template-columns: 1.5fr 1fr; 
+    gap: 20px;
+    width: 100%;
+    max-width: 1200px;
+    margin-top: 20px;
+    /* This makes both panels stretch to the same height */
+    align-items: start; 
+}
