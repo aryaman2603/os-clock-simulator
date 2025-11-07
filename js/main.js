@@ -1,4 +1,4 @@
-import { ClockAlgorithm } from './clockAlgos.js';
+import { ClockAlgorithm } from './clockAlgos.js'; // Using your import name
 import { ClockRenderer } from './renderer.js';
 
 // --- State Variables ---
@@ -7,11 +7,13 @@ let renderer = null;
 let isPlaying = false;
 let animationTimer = null;
 let animationSpeed = 1000; // Default speed in ms
+let history = []; // <-- ADDED: To store previous states
 
 // --- DOM Element References ---
 const canvas = document.getElementById('clock-canvas');
 const startButton = document.getElementById('start-button');
 const playPauseButton = document.getElementById('play-pause-button');
+const stepBackButton = document.getElementById('step-back-button'); // <-- ADDED
 const stepButton = document.getElementById('step-button');
 const speedSlider = document.getElementById('speed-slider');
 
@@ -27,6 +29,7 @@ const logOutput = document.getElementById('log-output');
 // --- Event Listeners ---
 startButton.addEventListener('click', initializeSimulation);
 playPauseButton.addEventListener('click', togglePlayPause);
+stepBackButton.addEventListener('click', doBackStep); // <-- ADDED
 stepButton.addEventListener('click', doStep);
 // Update speed immediately as the slider moves
 speedSlider.addEventListener('input', (e) => {
@@ -46,6 +49,7 @@ function initializeSimulation() {
     // Stop any existing animation
     if (animationTimer) clearInterval(animationTimer);
     isPlaying = false;
+    history = []; // <-- ADDED: Reset history
     playPauseButton.textContent = 'Play';
     playPauseButton.classList.remove('paused');
 
@@ -73,6 +77,7 @@ function initializeSimulation() {
     // Enable controls
     playPauseButton.disabled = false;
     stepButton.disabled = false;
+    stepBackButton.disabled = true; // <-- ADDED: Start disabled
 }
 
 /**
@@ -85,6 +90,8 @@ function togglePlayPause() {
     if (isPlaying) {
         playPauseButton.textContent = 'Pause';
         playPauseButton.classList.add('paused');
+        stepBackButton.disabled = true; // <-- ADDED: Disable during play
+        stepButton.disabled = true; // <-- ADDED: Disable during play
         // Do one step immediately, then start interval
         doStep();
         animationTimer = setInterval(doStep, animationSpeed);
@@ -92,6 +99,9 @@ function togglePlayPause() {
         playPauseButton.textContent = 'Play';
         playPauseButton.classList.remove('paused');
         clearInterval(animationTimer);
+        stepButton.disabled = false; // <-- ADDED: Re-enable
+        // Re-enable step back ONLY if history exists
+        stepBackButton.disabled = (history.length === 0); // <-- ADDED
     }
 }
 
@@ -107,13 +117,24 @@ function doStep() {
         playPauseButton.classList.remove('paused');
         playPauseButton.disabled = true;
         stepButton.disabled = true;
+        // Keep stepBack enabled if history exists
+        stepBackButton.disabled = (history.length === 0); // <-- ADDED
         return;
     }
+
+    // --- SAVE HISTORY ---
+    // Save a deep copy of the current state *before* stepping
+    const currentState = JSON.parse(JSON.stringify(algorithm));
+    history.push(currentState);
+    // --- END SAVE ---
 
     algorithm.step();
     renderer.draw(algorithm);
     updateStats();
     addToLog(algorithm.logMessage, algorithm.logType);
+
+    // We just made a move, so we can definitely go back
+    stepBackButton.disabled = false; // <-- ADDED
 }
 
 /**
@@ -131,11 +152,7 @@ function updateStats() {
     currentPageEl.textContent = algorithm.currentPage || 'N/A';
 }
 
-/**
- * Adds a styled message to the execution log div.
- * @param {string} message The message to log.
- * @param {string} type The type of log (info, hit, fault, check).
- */
+
 function addToLog(message, type = 'info') {
     if (!message) return;
 
@@ -150,4 +167,50 @@ function addToLog(message, type = 'info') {
 
     // Auto-scroll to the bottom
     logOutput.scrollTop = logOutput.scrollHeight; 
+}
+
+
+// --- NEW FUNCTIONS FOR STEP BACK ---
+
+/**
+ * Executes one step backward by restoring the previous state.
+ */
+function doBackStep() {
+    // Can't go back if history is empty or if we're auto-playing
+    if (history.length === 0 || isPlaying) {
+        return;
+    }
+
+    // Get the previous state
+    const previousState = history.pop();
+    
+    // Restore all properties from the previous state
+    Object.assign(algorithm, previousState);
+
+    // Redraw the canvas
+    renderer.draw(algorithm);
+    
+    // Update the stats panel
+    updateStats();
+    
+    // Remove the last log entry from the UI
+    removeLastLogEntry();
+
+    // If history is now empty, disable the back button
+    if (history.length === 0) {
+        stepBackButton.disabled = true;
+    }
+
+    
+    playPauseButton.disabled = false;
+    stepButton.disabled = false;
+    playPauseButton.textContent = 'Play';
+    playPauseButton.classList.remove('paused');
+}
+
+
+function removeLastLogEntry() {
+    if (logOutput.lastChild) {
+        logOutput.removeChild(logOutput.lastChild);
+    }
 }

@@ -186,3 +186,8 @@ input[type="range"] {
     /* This makes both panels stretch to the same height */
     align-items: start; 
 }
+
+
+#step-back-button {
+    margin-right: 8px;
+}
